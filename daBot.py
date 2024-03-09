@@ -7,7 +7,7 @@ with open('config.json') as handle: config = json.loads(handle.read())
 class aeza():
 
     async def browse(self):
-        browser = await launch(headless=config['debug'],autoClose=True,executablePath=config['executablePath'])
+        browser = await launch(headless=config['headless'],autoClose=True,executablePath=config['executablePath'])
         page = await browser.newPage()
         await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36')
         await page.goto(f"https://my.aeza.net/auth/login")
@@ -39,7 +39,9 @@ class aeza():
             out.write(json.dumps(token))
 
 Aeza = aeza()
-if not os.path.isfile("daToken.json"): Aeza.grabToken()
+if not os.path.isfile("daToken.json"):
+    print("Token not found, grabbing token")
+    Aeza.grabToken()
 with open('daToken.json') as handle: token = json.loads(handle.read())
 
 print("Fetching services info")
