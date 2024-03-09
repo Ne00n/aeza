@@ -1,6 +1,6 @@
+import asyncio, requests, json, time, os
 from pyvirtualdisplay import Display
 from fake_useragent import UserAgent
-import asyncio, requests, json, os
 from pyppeteer import launch
 
 print("Loading config")
@@ -56,7 +56,12 @@ Aeza = aeza()
 if not os.path.isfile("daToken.json"):
     print("Token not found, grabbing token")
     Aeza.grabToken()
+
 with open('daToken.json') as handle: token = json.loads(handle.read())
+if token['expires'] < time.time():
+    print("Token expired, getting a new one")
+    Aeza.grabToken()
+    with open('daToken.json') as handle: token = json.loads(handle.read())
 
 print("Fetching services info")
 headers = {'referer': f'https://my.aeza.net/','Origin': 'https://my.aeza.net',
