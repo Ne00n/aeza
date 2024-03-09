@@ -41,18 +41,29 @@ class aeza():
 Aeza = aeza()
 if not os.path.isfile("daToken.json"): Aeza.grabToken()
 with open('daToken.json') as handle: token = json.loads(handle.read())
+
+print("Fetching services info")
+headers = {'referer': f'https://my.aeza.net/','Origin': 'https://my.aeza.net',
+'Cookie': f'token={token["value"]}','Authorization': f'Bearer {token["value"]}'}
+req = requests.get(f'https://my.aeza.net/api/services',headers=headers)
+if req.status_code != 200:
+    print(f"Failed to fetch services")
+    print(req.text)
+    exit(1)
+
+services = req.json()
 for service,ip in config['services'].items():
     print(f"Checking {service}")
-    ping = os.system(f"ping {ip} -c3 >/dev/null 2>&1")
-    if ping != 0:
-        print(f"{ip} is down!")
-        headers = {'referer': f'https://my.aeza.net/services/{service}/','Origin': 'https://my.aeza.net',
-        'Cookie': f'token={token["value"]}','Authorization': f'Bearer {token["value"]}'}
-        payload = {"action":"resume"}
-        req = requests.post(f'https://my.aeza.net/api/services/{service}/ctl?',json=payload,headers=headers)
-        print(req.text)
-        if req.status_code == 200:
-            print(f"Unsuspended {service}")
-        else:
-            print(f"Failed to Unsuspended {service}")
+    for item in services['data']['items']:
+        if item['id'] == int(service) and item['status'] == "suspended":
+            print(f"{service} is suspended")
+            headers = {'referer': f'https://my.aeza.net/services/{service}/','Origin': 'https://my.aeza.net',
+            'Cookie': f'token={token["value"]}','Authorization': f'Bearer {token["value"]}'}
+            payload = {"action":"resume"}
+            req = requests.post(f'https://my.aeza.net/api/services/{service}/ctl?',json=payload,headers=headers)
+            if req.status_code == 200:
+                print(f"Unsuspended {service}")
+            else:
+                print(f"Failed to Unsuspended {service}")
+            break
 
