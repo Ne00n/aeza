@@ -1,6 +1,6 @@
 # aeza
 
-![data mining](https://i.pinimg.com/originals/f2/8c/57/f28c57e6bfa870458242641fb81ff8d1.gif
+![outplayed](https://i.pinimg.com/originals/f2/8c/57/f28c57e6bfa870458242641fb81ff8d1.gif)
 
 ## Work in Progress
 
