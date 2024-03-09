@@ -1,4 +1,5 @@
 from pyvirtualdisplay import Display
+from fake_useragent import UserAgent
 import asyncio, requests, json, os
 from pyppeteer import launch
 
@@ -15,7 +16,10 @@ class aeza():
 
         browser = await launch(headless=config['headless'],autoClose=True,executablePath=config['executablePath'])
         page = await browser.newPage()
-        await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36')
+        ua = UserAgent()
+        userAgent = ua.chrome
+        print(f"Using {userAgent}")
+        await page.setUserAgent(userAgent)
         await page.goto(f"https://my.aeza.net/auth/login")
         await asyncio.sleep(3)
 
