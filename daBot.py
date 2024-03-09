@@ -1,5 +1,6 @@
-from pyppeteer import launch
+from pyvirtualdisplay import Display
 import asyncio, requests, json, os
+from pyppeteer import launch
 
 print("Loading config")
 with open('config.json') as handle: config = json.loads(handle.read())
@@ -7,6 +8,11 @@ with open('config.json') as handle: config = json.loads(handle.read())
 class aeza():
 
     async def browse(self):
+        if config['headless']:
+            print("Starting virtual display")
+            display = Display(visible=0, size=(1920, 1080))
+            display.start()
+
         browser = await launch(headless=config['headless'],autoClose=True,executablePath=config['executablePath'])
         page = await browser.newPage()
         await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36')
@@ -25,6 +31,10 @@ class aeza():
 
         await page.close()
         await browser.close()
+
+        if config['headless']: 
+            print("Stopping virtual display")
+            display.stop()
         return cookies
 
     def grabToken(self):

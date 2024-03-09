@@ -12,8 +12,8 @@ curl 'https://my.aeza.net/api/services/mahServiceID/ctl?' --compressed -X POST
 **Dependencies**<br />
 Python 3.7 or higher<br />
 ```
-pip3 install pyppeteer
-apt-get -y install chromium-browser
+pip3 install pyppeteer PyVirtualDisplay
+apt-get -y install chromium-browser xvfb
 cp config.example.json config.json
 ```
 
