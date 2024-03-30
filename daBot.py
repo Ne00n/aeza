@@ -41,6 +41,10 @@ class aeza():
             display.stop()
         return cookies
 
+    def getHeaders(self,token,referer='https://my.aeza.net/'):
+        return {'referer': referer,'Origin': 'https://my.aeza.net',
+        'Cookie': f'token={token["value"]}','Authorization': f'Bearer {token["value"]}'}
+
     def grabToken(self):
         cookies = asyncio.run(self.browse())
         for cookie in cookies:
@@ -64,9 +68,7 @@ if token['expires'] < time.time():
     token = Aeza.grabToken()
 
 print("Fetching services info")
-headers = {'referer': f'https://my.aeza.net/','Origin': 'https://my.aeza.net',
-'Cookie': f'token={token["value"]}','Authorization': f'Bearer {token["value"]}'}
-req = requests.get(f'https://my.aeza.net/api/services',headers=headers)
+req = requests.get(f'https://my.aeza.net/api/services',headers=Aeza.getHeaders(token))
 if req.status_code != 200:
     print(f"Failed to fetch services")
     print(req.text)
@@ -78,10 +80,7 @@ for service,ip in config['services'].items():
     for item in services['data']['items']:
         if item['id'] == int(service) and item['status'] == "suspended":
             print(f"{service} is suspended")
-            headers = {'referer': f'https://my.aeza.net/services/{service}/','Origin': 'https://my.aeza.net',
-            'Cookie': f'token={token["value"]}','Authorization': f'Bearer {token["value"]}'}
-            payload = {"action":"resume"}
-            req = requests.post(f'https://my.aeza.net/api/services/{service}/ctl?',json=payload,headers=headers)
+            req = requests.post(f'https://my.aeza.net/api/services/{service}/ctl?',json={"action":"resume"},headers=Aeza.getHeaders(token,f'https://my.aeza.net/services/{service}/'))
             if req.status_code == 200:
                 print(f"Unsuspended {service}")
             else:
