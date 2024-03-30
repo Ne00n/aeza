@@ -51,6 +51,7 @@ class aeza():
         print(f"Saving TOKAAAAN")
         with open('daToken.json', 'w') as out:
             out.write(json.dumps(token))
+        return token
 
 Aeza = aeza()
 if not os.path.isfile("daToken.json"):
@@ -60,8 +61,7 @@ if not os.path.isfile("daToken.json"):
 with open('daToken.json') as handle: token = json.loads(handle.read())
 if token['expires'] < time.time():
     print("Token expired, getting a new one")
-    Aeza.grabToken()
-    with open('daToken.json') as handle: token = json.loads(handle.read())
+    token = Aeza.grabToken()
 
 print("Fetching services info")
 headers = {'referer': f'https://my.aeza.net/','Origin': 'https://my.aeza.net',
